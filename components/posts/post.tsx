@@ -5,3 +5,7 @@ export interface Post {
   image: string;
   slug: string;
 }
+
+export interface ContentPost extends Post {
+  content: string;
+}
