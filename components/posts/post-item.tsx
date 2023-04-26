@@ -2,14 +2,7 @@ import { FC } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import classes from './post-item.module.css';
-
-interface Post {
-  title: string;
-  excerpt: string;
-  date: string;
-  image: string;
-  slug: string;
-}
+import { Post } from './post';
 
 interface PostItemProps {
   post: Post
