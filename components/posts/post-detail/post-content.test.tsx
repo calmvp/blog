@@ -17,10 +17,10 @@ describe('PostContent', () => {
   });
 
   test.each([
-    { content: '# mY FIRST POST' },
-    { content: '# my Second Post' },
-    { content: '# ANOTHA ONE'}
-  ])('renders post content: $content', ({ content }) => {
+    { content: '# mY FIRST POST', expected: 'mY FIRST POST' },
+    { content: '# my Second Post', expected: 'my Second Post' },
+    { content: '# ANOTHA ONE', expected: 'ANOTHA ONE' }
+  ])('renders post content: $content', ({ content, expected }) => {
     const post = {
       date: '',
       excerpt: '',
@@ -30,7 +30,7 @@ describe('PostContent', () => {
       content: content
     };
     render(<PostContent post={post} />);
-    const actual = screen.getByText(content);
+    const actual = screen.getByText(expected);
     expect(actual).toBeInTheDocument();
   });
 
