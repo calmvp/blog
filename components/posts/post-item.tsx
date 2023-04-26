@@ -15,11 +15,12 @@ const PostItem: FC<PostItemProps> = ( { post: { title, excerpt, date, image, slu
     year: 'numeric'
   });
 
+  const linkPath = `/posts/${slug}`;
   const imagePath = image && slug ? `/images/posts/${slug}/${image}` : undefined;
-
+  
   return (
     <li>
-      <Link href=''>
+      <Link href={linkPath}>
         {imagePath && <div className={classes.image}>
           <Image src={imagePath} alt={title} width={300} height={200} />
         </div>}

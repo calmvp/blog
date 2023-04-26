@@ -76,5 +76,24 @@ describe('PostItem', () => {
     
     expect(actualImage).toHaveAttribute('src', expectedSrc);
     expect(actualImage).toHaveAttribute('alt', title);
-  })
+  });
+
+  test.each([
+    { slug: 'my-slug', expectedPath: '/posts/my-slug' },
+    { slug: 'test-slug', expectedPath: '/posts/test-slug' },
+    { slug: 'asdf', expectedPath: '/posts/asdf' }
+  ])('renders Link to post item path', ({ slug, expectedPath }) => {
+    const post = {
+      date: '',
+      excerpt: '',
+      title: '',
+      image: '',
+      slug: slug
+    };
+    
+    render(<PostItem post={post} />);
+    const actualLink = screen.getByRole('link');
+
+    expect(actualLink).toHaveAttribute('href', expectedPath);
+  });
 });
