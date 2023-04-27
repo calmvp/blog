@@ -6,21 +6,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { BASE_URL, MONGOUSER, PASSWORD } = process.env;
     if (BASE_URL && MONGOUSER && PASSWORD) {
       const endpoint = BASE_URL.replace('<username>', MONGOUSER).replace('<password>', PASSWORD);
-      console.log(endpoint);
       try {
         const { posts } = req.body;
-        // const { title, excerpt, date, image, slug, content, isFeatured } = req.body;
         const client = await MongoClient.connect(endpoint);
         const db = client.db();
-        // await db.collection('posts').insertOne({
-        //   title,
-        //   excerpt,
-        //   date,
-        //   image,
-        //   slug,
-        //   isFeatured,
-        //   content
-        // });
         await db.collection('posts').insertMany(posts);
         client.close();
 
