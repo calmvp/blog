@@ -9,21 +9,24 @@ describe('PostGrid', () => {
       title: 'test title 1',
       date: '',
       image:'test1img.jpg',
-      slug: 'test1-slug'
+      slug: 'test1-slug',
+      isFeatured: true
     },
     {
       excerpt: 'my second test exceprt',
       title: 'test title 2',
       date: '',
       image:'test2img.jpg',
-      slug: 'test2-slug'
+      slug: 'test2-slug',
+      isFeatured: true
     },
     {
       excerpt: 'my third test exceprt',
       title: 'test title 3',
       date: '',
       image:'test3img.jpg',
-      slug: 'test3-slug'
+      slug: 'test3-slug',
+      isFeatured: true
     }
   ]
   test('renders post title for each element in posts', () => {

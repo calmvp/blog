@@ -9,7 +9,8 @@ describe('PostContent', () => {
       title: '',
       image: '',
       slug: '',
-      content: ''
+      content: '',
+      isFeatured: true
     };
     render(<PostContent post={post} />);
     const actual = screen.getByRole('article');
@@ -27,7 +28,8 @@ describe('PostContent', () => {
       title: '',
       image: '',
       slug: '',
-      content: content
+      content: content,
+      isFeatured: true
     };
     render(<PostContent post={post} />);
     const actual = screen.getByText(expected);
@@ -41,7 +43,8 @@ describe('PostContent', () => {
       title: 'My Post Title',
       image: '',
       slug: '',
-      content: ''
+      content: '',
+      isFeatured: true
     };
     render(<PostContent post={post} />);
     const actualHeader = screen.getByRole('heading', { name: post.title});
@@ -59,7 +62,8 @@ describe('PostContent', () => {
       title: title,
       image: image,
       slug: slug,
-      content: ''
+      content: '',
+      isFeatured: true
     };
     render(<PostContent post={post} />);
     const expectedSrc = expect.stringContaining(encodeURIComponent(expectedPath));

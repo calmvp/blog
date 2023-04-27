@@ -7,7 +7,8 @@ const DUMMY_POSTS: Post[] = [
     title: 'Getting Started With NextJs',
     image:'getting-started-nextjs.png',
     excerpt: 'NextJS is a React framework for production',
-    date: '2022-02-10'
+    date: '2022-02-10',
+    isFeatured: false
   }
 ];
 

@@ -12,7 +12,8 @@ describe('PostItem', () => {
       title: title,
       date: '',
       image:'',
-      slug: ''
+      slug: '',
+      isFeatured: true
     };
     render(<PostItem post={ post }/>);
     const expectedTitle = screen.getByRole('heading', { name: title });
@@ -29,7 +30,8 @@ describe('PostItem', () => {
       title: '',
       date: '',
       image: '',
-      slug: ''
+      slug: '',
+      isFeatured: true
     };
 
     render(<PostItem post={post}/>);
@@ -47,7 +49,8 @@ describe('PostItem', () => {
       excerpt: '',
       title: '',
       image: '',
-      slug: ''
+      slug: '',
+      isFeatured: true
     };
 
     render(<PostItem post={post} />);
@@ -65,7 +68,8 @@ describe('PostItem', () => {
       excerpt: '',
       title: title,
       image: image,
-      slug: slug
+      slug: slug,
+      isFeatured: true
     }
 
     render(<PostItem post={post} />);
@@ -88,7 +92,8 @@ describe('PostItem', () => {
       excerpt: '',
       title: '',
       image: '',
-      slug: slug
+      slug: slug,
+      isFeatured: true
     };
     
     render(<PostItem post={post} />);

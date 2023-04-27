@@ -4,6 +4,7 @@ export interface Post {
   date: string;
   image: string;
   slug: string;
+  isFeatured: boolean;
 }
 
 export interface ContentPost extends Post {
