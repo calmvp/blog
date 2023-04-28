@@ -1,19 +1,29 @@
+import { FC } from "react";
 import AllPosts from "@/components/posts/all-posts";
-import { Post } from "@/components/posts/post";
+import { ContentPost, Post } from "@/components/posts/post";
 
-const DUMMY_POSTS: Post[] = [
-  {
-    slug: 'getting-started-with-nextjs',
-    title: 'Getting Started With NextJs',
-    image:'getting-started-nextjs.png',
-    excerpt: 'NextJS is a React framework for production',
-    date: '2022-02-10',
-    isFeatured: false
+interface AllPostsPageProps {
+  posts: ContentPost[];
+}
+
+const AllPostsPage: FC<AllPostsPageProps> = ({ posts }) => {
+  console.log(posts);
+  return (
+    <>
+      {posts && <AllPosts posts={posts} />}
+    </>
+  )
+}
+
+export async function getStaticProps() {
+  const { BASE_URL } = process.env;
+  const response = await fetch(`${BASE_URL}/api/posts`);
+  const data = await response.json();
+  return {
+    props: {
+      posts: data
+    }
   }
-];
-
-const AllPostsPage = () => {
-  return <AllPosts posts={DUMMY_POSTS} />
 }
 
 export default AllPostsPage;
