@@ -23,17 +23,17 @@ const HomePage: FC<HomePageProps> = ({ posts }) => {
     <Fragment>
       <Hero />
       {posts && <FeaturedPosts posts={posts} />}
-      <button>Write Posts</button>
     </Fragment>
   )
 };
 
 export async function getStaticProps() {
-  const response = await fetch('http://localhost:3000/api/posts');
+  const { BASE_URL } = process.env;
+  const response = await fetch(`${BASE_URL}/api/posts?featured=true`);
   const data = await response.json();
   return {
     props: {
-      posts: data.posts
+      posts: data
     }
   }
 }
