@@ -7,7 +7,6 @@ interface AllPostsPageProps {
 }
 
 const AllPostsPage: FC<AllPostsPageProps> = ({ posts }) => {
-  console.log(posts);
   return (
     <>
       {posts && <AllPosts posts={posts} />}

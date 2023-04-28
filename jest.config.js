@@ -9,6 +9,7 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
+  setupFiles: ['<rootDir>/lib/text-encoder.mock.ts']
 }
 
 // https://github.com/vercel/next.js/issues/35634#issuecomment-1115250297
