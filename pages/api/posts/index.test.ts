@@ -1,12 +1,15 @@
 import { createMocks, createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from './index';
-import mongodb, { MongoClient } from 'mongodb';
+import * as postsService from  '../../../services/posts-service';
+import { ContentPost } from '@/components/posts/post';
 
 type ApiRequest = NextApiRequest & ReturnType<typeof createRequest>;
 type ApiResponse = NextApiResponse & ReturnType<typeof createResponse>;
 
-jest.mock('mongodb');
+jest.mock('../../../services/posts-service.ts');
+const mockedPostsService = jest.mocked(postsService);
+
 describe('/api/posts API Endpoint', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -23,7 +26,6 @@ describe('/api/posts API Endpoint', () => {
 
   it('should return a 405 if HTTP method is not GET or POST', async () => {
     const { req, res} = mockRequestResponse('PUT');
-
     await handler(req, res);
 
     expect(res.statusCode).toBe(405);
@@ -32,45 +34,100 @@ describe('/api/posts API Endpoint', () => {
     });
   });
 
-  it('should return a 500 on failure to connect to database', async () => {
-    // arrange
-    const { req, res }  = mockRequestResponse('GET');
-    const connectSpy = jest.spyOn(MongoClient, 'connect').mockRejectedValueOnce(new Error('failed'));
+  describe('GET request method', () => {
+    it('should call the imported getAllPosts function if !featured query param and return 200', async () => {
+      const { req, res} = mockRequestResponse('GET');
 
-    // act
-    await handler(req, res);
+      await handler(req, res);
 
-    // assert
-    expect(connectSpy).toHaveBeenCalled();
-    expect(res.statusCode).toBe(500);
-    expect(res._getJSONData()).toEqual({
-      err: 'Failed to connect to database'
+      expect(mockedPostsService.getAllPosts).toHaveBeenCalledTimes(1);
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should call the imported getFeaturedPosts function if featured query param and return 200', async () => {
+      const { req, res} = mockRequestResponse('GET');
+      req.query = {
+        featured: true
+      };
+
+      await handler(req, res);
+
+      expect(mockedPostsService.getFeaturedPosts).toHaveBeenCalledTimes(1);
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return a 400 status code if the getAllPosts function rejects', async () => {
+      const { req, res} = mockRequestResponse('GET');
+      (mockedPostsService.getAllPosts).mockRejectedValueOnce(new Error('failed'));
+      
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData()).toEqual({ err: 'Failed to retrieve posts' });
+    });
+
+    it('should return a 400 status code if the getAllPosts function rejects', async () => {
+      const { req, res} = mockRequestResponse('GET');
+      req.query = {
+        featured: true
+      };
+      (mockedPostsService.getFeaturedPosts).mockRejectedValueOnce(new Error('failed'));
+      
+      await handler(req, res);
+
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData()).toEqual({ err: 'Failed to retrieve posts' });
     });
   });
-  describe('GET request method', () => {
-    it('should call the .find on the database with no args if featured query param is falsey', async () => {
-      // arrange
-      const { req, res } = mockRequestResponse('GET');
-      const client = { db: jest.fn().mockReturnThis() }
-      const connectSpy = jest.spyOn(MongoClient, 'connect')
-        .mockResolvedValueOnce(({ 
-          db: jest.fn().mockReturnValue(
-            {
-              collection: jest.fn().mockReturnValue({
-                find: jest.fn().mockReturnValueOnce([{ _id: 2 },{ _id: 4}])
-              })
-            }
-          ),
-          close: jest.fn()
-        } as unknown) as MongoClient);
-      
-      // act
+
+  describe('POST request method', () => {
+    const expectedPosts: ContentPost[] = [
+      {
+        title: 'my title',
+        excerpt: 'test ex',
+        date: '2022-04-05',
+        image: 'test-image.jpg',
+        slug: 'my-title',
+        isFeatured: false,
+        content: 'mock content'
+      },
+      {
+        title: 'here is a title',
+        excerpt: 'test excerpt here',
+        date: '2023-01-02',
+        image: 'test-my-image.jpg',
+        slug: 'here-is-a-slug',
+        isFeatured: true,
+        content: 'more mock content'
+      }
+    ];
+    it('should call the imported writePosts function with an array of posts from the request body and return a 201 status code', async () => {
+      const { req, res } = mockRequestResponse('POST');
+      req.body = {
+        posts: expectedPosts
+      }
+
       await handler(req, res);
-      console.log(res.statusCode);
-      // assert
-      expect(connectSpy).toHaveBeenCalled();
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData).toEqual([]);
+
+      expect(mockedPostsService.writePosts).toHaveBeenCalledTimes(1);
+      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(expectedPosts);
+      expect(res.statusCode).toBe(201);
+      expect(res._getJSONData()).toEqual({ message: 'Success!' });
     });
+
+    it('should return a 400 status code if the writePosts function rejects', async () => {
+      const { req, res } = mockRequestResponse('POST');
+      req.body = {
+        posts: expectedPosts
+      }
+      mockedPostsService.writePosts.mockRejectedValue(new Error('Failed'));
+
+      await handler(req, res);
+
+      expect(mockedPostsService.writePosts).toHaveBeenCalledTimes(1);
+      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(expectedPosts);
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData()).toEqual({ err: 'Failed to write posts' });
+    })
   });
 });
