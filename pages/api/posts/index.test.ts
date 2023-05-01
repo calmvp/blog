@@ -56,7 +56,9 @@ describe('/api/posts API Endpoint', () => {
         .mockResolvedValueOnce(({ 
           db: jest.fn().mockReturnValue(
             {
-              find: jest.fn().mockResolvedValueOnce([])
+              collection: jest.fn().mockReturnValue({
+                find: jest.fn().mockReturnValueOnce([{ _id: 2 },{ _id: 4}])
+              })
             }
           ),
           close: jest.fn()
@@ -64,7 +66,7 @@ describe('/api/posts API Endpoint', () => {
       
       // act
       await handler(req, res);
-
+      console.log(res.statusCode);
       // assert
       expect(connectSpy).toHaveBeenCalled();
       expect(res.statusCode).toBe(200);

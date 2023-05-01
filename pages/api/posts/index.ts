@@ -36,6 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       client.close();
       res.status(200).json(posts)
     } catch (err) {
+      console.log(err);
       res.status(400).json({err: JSON.stringify(err)});
       return;
     }
