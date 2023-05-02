@@ -10,6 +10,10 @@ interface HomePageProps {
 }
 
 const HomePage: FC<HomePageProps> = ({ posts, error }) => {
+  posts?.sort((a, b) => {
+    return b.date.localeCompare(a.date);
+  });
+
   return (
     <Fragment>
       <Hero />

@@ -9,6 +9,10 @@ interface AllPostsPageProps {
 }
 
 const AllPostsPage: FC<AllPostsPageProps> = ({ posts, error }) => {
+  posts?.sort((a, b) => {
+    return b.date.localeCompare(a.date);
+  });
+  
   return (
     <>
       {error && <p>An Error Occurred</p>}
