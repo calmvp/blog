@@ -99,4 +99,73 @@ describe('the posts service', () => {
       expect(actual).toEqual(expectedPosts);
     });
   });
+  describe('getFeaturedPosts', () => {
+    it('it should call find on the db posts collection with expected find object', async () => {
+      const mockSort = jest.fn();
+      const mockFind = jest.fn();
+      const mockToArray = jest.fn();
+      const mockCollectionObj = {
+        find: mockFind.mockReturnValueOnce({
+          sort: mockSort.mockReturnValueOnce({
+            toArray: mockToArray.mockResolvedValueOnce([])
+          })
+        })
+      };
+      const mockDb = ({ 
+        collection: jest.fn().mockReturnValueOnce(mockCollectionObj)
+      } as unknown) as Db;
+
+      const mockClient = ({ close: jest.fn(), db: jest.fn().mockReturnValueOnce(mockDb) } as unknown) as MongoClient;
+      
+      const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
+      
+      const actual = await postsService.getFeaturedPosts();
+
+      expect(mockFind).toHaveBeenCalledTimes(1);
+      expect(mockFind).toHaveBeenCalledWith({ isFeatured: true });
+      expect(mockSort).toHaveBeenCalledWith({ _id: -1 });
+    });
+  });
+  describe('writePosts', () => {
+    const expectedPosts: ContentPost[] = [
+      {
+        title: 'my title',
+        excerpt: 'test ex',
+        date: '2022-04-05',
+        image: 'test-image.jpg',
+        slug: 'my-title',
+        isFeatured: false,
+        content: 'mock content'
+      },
+      {
+        title: 'here is a title',
+        excerpt: 'test excerpt here',
+        date: '2023-01-02',
+        image: 'test-my-image.jpg',
+        slug: 'here-is-a-slug',
+        isFeatured: true,
+        content: 'more mock content'
+      }
+    ];
+    it('should call insertMany on the posts collection', async () => {
+      const mockInsertMany = jest.fn();
+      const mockCollectionObj = {
+        insertMany: mockInsertMany
+      };
+      const mockDb = ({ 
+        collection: jest.fn().mockReturnValueOnce(mockCollectionObj)
+      } as unknown) as Db;
+
+      const mockClient = ({ close: jest.fn(), db: jest.fn().mockReturnValueOnce(mockDb) } as unknown) as MongoClient;
+      
+      const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
+      
+      await postsService.writePosts(expectedPosts);
+
+      expect(mockDb.collection).toHaveBeenCalledTimes(1);
+      expect(mockDb.collection).toHaveBeenCalledWith('posts');
+      expect(mockInsertMany).toHaveBeenCalledTimes(1);
+      expect(mockInsertMany).toHaveBeenCalledWith(expectedPosts);
+    })
+  });
 });
