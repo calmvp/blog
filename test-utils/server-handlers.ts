@@ -1,10 +1,17 @@
 import { rest } from 'msw';
-import { mockedPosts } from '../__mocks__/mocks'
+import { mockedFeaturedPosts, mockedPosts } from '../__mocks__/mocks'
 
 const {BASE_URL} = process.env;
 
 const getPostsPath = `${BASE_URL}/api/posts`;
-const getPostsHandler = rest.get(getPostsPath, async (_req, res, ctx) => {
+const getPostsHandler = rest.get(getPostsPath, async (req, res, ctx) => {
+  const featured = req.url.searchParams.get('featured');
+  if (featured) {
+    return res(
+      ctx.status(200),
+      ctx.json(mockedFeaturedPosts)
+    );
+  }
   return res(
     ctx.status(200),
     ctx.json(mockedPosts)

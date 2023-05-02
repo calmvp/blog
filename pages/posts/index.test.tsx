@@ -4,10 +4,6 @@ import { server } from "../../test-utils/server";
 import { getPostsHandlerException } from '../../test-utils/server-handlers';
 import { mockedPosts } from "../../__mocks__/mocks";
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
-
 describe('AllPostsPage', () => {
   test('it should render an AllPosts component, given posts prop', () => {
     render(<AllPostsPage posts={mockedPosts} />);
@@ -47,6 +43,9 @@ describe('AllPostsPage', () => {
   });
 
   describe('getStaticProps', () => {
+    beforeAll(() => server.listen());
+    afterEach(() => server.resetHandlers());
+    afterAll(() => server.close());
     test('it should return an object with a props key to an object containing expected posts', async () => {
       const expectedPosts = mockedPosts;
       const actual = await getStaticProps();
