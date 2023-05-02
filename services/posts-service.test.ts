@@ -1,5 +1,6 @@
+import { ContentPost } from '@/components/posts/post';
 import * as postsService from './posts-service';
-import { MongoClient } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 
 
 describe('the posts service', () => {
@@ -9,7 +10,7 @@ describe('the posts service', () => {
 
   describe('getClientDb', () => {
     it('should call connect on the MongoClient with the expected endpoint uri', async () => {
-      const client = { db: jest.fn().mockReturnThis(), collection: jest.fn() };
+      const client = { db: jest.fn().mockReturnThis() };
       const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((client as unknown) as MongoClient);
       const { MONGO_BASE_URL, MONGOUSER, PASSWORD } = process.env;
       const expectedEndpoint= MONGO_BASE_URL!.replace('<username>', MONGOUSER!).replace('<password>', PASSWORD!);
@@ -31,6 +32,71 @@ describe('the posts service', () => {
     });
   });
   describe('getAllPosts', () => {
-    
-  })
+    const expectedPosts: ContentPost[] = [
+      {
+        title: 'my title',
+        excerpt: 'test ex',
+        date: '2022-04-05',
+        image: 'test-image.jpg',
+        slug: 'my-title',
+        isFeatured: false,
+        content: 'mock content'
+      },
+      {
+        title: 'here is a title',
+        excerpt: 'test excerpt here',
+        date: '2023-01-02',
+        image: 'test-my-image.jpg',
+        slug: 'here-is-a-slug',
+        isFeatured: true,
+        content: 'more mock content'
+      }
+    ];
+
+    it('should call db collection with "posts"', async () => {
+      const mockDb = ({ 
+        collection: jest.fn().mockReturnValueOnce({
+          find: jest.fn().mockReturnValueOnce({
+            sort: jest.fn().mockReturnValue({
+              toArray: jest.fn().mockResolvedValueOnce([])
+            })
+          })
+        })
+      } as unknown) as Db;
+
+      const mockClient = ({ close: jest.fn(), db: jest.fn().mockReturnValueOnce(mockDb) } as unknown) as MongoClient;
+      
+      const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
+      
+      await postsService.getAllPosts();
+
+      expect(mockDb.collection).toHaveBeenCalledWith('posts');
+    });
+
+    it('should call find on the db collection, call sort with expected args and return expected array', async () => {
+      const mockSort = jest.fn();
+      const mockFind = jest.fn();
+      const mockToArray = jest.fn();
+      const mockCollectionObj = {
+        find: mockFind.mockReturnValueOnce({
+          sort: mockSort.mockReturnValueOnce({
+            toArray: mockToArray.mockResolvedValueOnce(expectedPosts)
+          })
+        })
+      };
+      const mockDb = ({ 
+        collection: jest.fn().mockReturnValueOnce(mockCollectionObj)
+      } as unknown) as Db;
+
+      const mockClient = ({ close: jest.fn(), db: jest.fn().mockReturnValueOnce(mockDb) } as unknown) as MongoClient;
+      
+      const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
+      
+      const actual = await postsService.getAllPosts();
+
+      expect(mockFind).toHaveBeenCalledTimes(1);
+      expect(mockSort).toHaveBeenCalledWith({ _id: -1 });
+      expect(actual).toEqual(expectedPosts);
+    });
+  });
 });

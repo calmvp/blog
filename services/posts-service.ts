@@ -10,8 +10,7 @@ export const getAllPosts = async() => {
     .toArray();
 
   client.close();
-
-  return posts;
+  return posts
 }
 
 export const getFeaturedPosts = async() => {
@@ -45,7 +44,6 @@ export const getClientDb = async () => {
         db: client.db()
       };
     } catch(err) {
-      console.log(err);
       throw new Error('Failed to connect to database');
     }
   } else {
