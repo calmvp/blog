@@ -26,6 +26,17 @@ export const getFeaturedPosts = async() => {
   return posts;
 }
 
+export const getPostBySlug = async(slug: string) => {
+  const { client, db } = await getClientDb();
+
+  const post = await db.collection('posts')
+    .findOne({ slug });
+  
+  client.close();
+
+  return post;
+}
+
 export const writePosts = async(posts: ContentPost[]) => {
   const { client, db } = await getClientDb();
   await db.collection('posts').insertMany(posts);

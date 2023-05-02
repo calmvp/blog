@@ -1,7 +1,8 @@
 import { ContentPost } from '@/components/posts/post';
 import * as postsService from './posts-service';
 import { Db, MongoClient } from 'mongodb';
-
+import { mockedPosts } from '../__mocks__/mocks';
+import { act } from 'react-dom/test-utils';
 
 describe('the posts service', () => {
   afterEach(() => {
@@ -32,27 +33,6 @@ describe('the posts service', () => {
     });
   });
   describe('getAllPosts', () => {
-    const expectedPosts: ContentPost[] = [
-      {
-        title: 'my title',
-        excerpt: 'test ex',
-        date: '2022-04-05',
-        image: 'test-image.jpg',
-        slug: 'my-title',
-        isFeatured: false,
-        content: 'mock content'
-      },
-      {
-        title: 'here is a title',
-        excerpt: 'test excerpt here',
-        date: '2023-01-02',
-        image: 'test-my-image.jpg',
-        slug: 'here-is-a-slug',
-        isFeatured: true,
-        content: 'more mock content'
-      }
-    ];
-
     it('should call db collection with "posts"', async () => {
       const mockDb = ({ 
         collection: jest.fn().mockReturnValueOnce({
@@ -80,7 +60,7 @@ describe('the posts service', () => {
       const mockCollectionObj = {
         find: mockFind.mockReturnValueOnce({
           sort: mockSort.mockReturnValueOnce({
-            toArray: mockToArray.mockResolvedValueOnce(expectedPosts)
+            toArray: mockToArray.mockResolvedValueOnce(mockedPosts)
           })
         })
       };
@@ -96,7 +76,7 @@ describe('the posts service', () => {
 
       expect(mockFind).toHaveBeenCalledTimes(1);
       expect(mockSort).toHaveBeenCalledWith({ _id: -1 });
-      expect(actual).toEqual(expectedPosts);
+      expect(actual).toEqual(mockedPosts);
     });
   });
   describe('getFeaturedPosts', () => {
@@ -126,27 +106,34 @@ describe('the posts service', () => {
       expect(mockSort).toHaveBeenCalledWith({ _id: -1 });
     });
   });
+  describe('getPostBySlug', () => {
+    it('it should call findOne on the db posts collection with expected find object', async () => {
+
+      const mockFindOne = jest.fn();
+      const expectedPost = mockedPosts[0];
+
+      const mockCollectionObj = {
+        findOne: mockFindOne.mockReturnValueOnce(expectedPost)
+      };
+
+      const mockDb = ({ 
+        collection: jest.fn().mockReturnValueOnce(mockCollectionObj)
+      } as unknown) as Db;
+
+      const mockClient = ({ close: jest.fn(), db: jest.fn().mockReturnValueOnce(mockDb) } as unknown) as MongoClient;
+      
+      const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
+      
+      const slug = expectedPost.slug;
+      const actual = await postsService.getPostBySlug(slug);
+
+      expect(mockDb.collection).toHaveBeenCalledWith('posts');
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockFindOne).toHaveBeenCalledWith({ slug });
+      expect(expectedPost).toEqual(actual);
+    });
+  });
   describe('writePosts', () => {
-    const expectedPosts: ContentPost[] = [
-      {
-        title: 'my title',
-        excerpt: 'test ex',
-        date: '2022-04-05',
-        image: 'test-image.jpg',
-        slug: 'my-title',
-        isFeatured: false,
-        content: 'mock content'
-      },
-      {
-        title: 'here is a title',
-        excerpt: 'test excerpt here',
-        date: '2023-01-02',
-        image: 'test-my-image.jpg',
-        slug: 'here-is-a-slug',
-        isFeatured: true,
-        content: 'more mock content'
-      }
-    ];
     it('should call insertMany on the posts collection', async () => {
       const mockInsertMany = jest.fn();
       const mockCollectionObj = {
@@ -160,12 +147,12 @@ describe('the posts service', () => {
       
       const connectSpy = jest.spyOn(MongoClient, 'connect').mockResolvedValueOnce((mockClient));
       
-      await postsService.writePosts(expectedPosts);
+      await postsService.writePosts(mockedPosts);
 
       expect(mockDb.collection).toHaveBeenCalledTimes(1);
       expect(mockDb.collection).toHaveBeenCalledWith('posts');
       expect(mockInsertMany).toHaveBeenCalledTimes(1);
-      expect(mockInsertMany).toHaveBeenCalledWith(expectedPosts);
+      expect(mockInsertMany).toHaveBeenCalledWith(mockedPosts);
     })
   });
 });
