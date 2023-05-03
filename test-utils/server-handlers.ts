@@ -33,16 +33,17 @@ const getPostHandler = rest.get(`${getPostsPath}/:slug`, async (req, res, ctx) =
       ctx.json(post)
     );
   }
-  
+
   return res(
     ctx.status(404),
     ctx.json({ message: 'Post not found'})
   );
 });
 
-export const getPostHandlerException = rest.get(`${getPostsPath}/:slug`, async(req, res, ctx) => {
-  res(ctx.status(500), ctx.json({ message: 'Get post by slug exception'}));
-});
+export const getPostHandlerException = rest.get(
+  `${getPostsPath}/:slug`, 
+  async(req, res, ctx) => res(ctx.status(500), ctx.json({ message: 'Get post by slug exception'}))
+);
 
 const handlers = [
   getPostsHandler,

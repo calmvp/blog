@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import PostDetailPage, { getServerSideProps } from './[slug]';
 import { mockedPosts } from '../../__mocks__/mocks';
 import { server } from "../../test-utils/server";
-import { getPostsHandlerException } from '../../test-utils/server-handlers';
+import { getPostHandlerException } from '../../test-utils/server-handlers';
 import { NextParsedUrlQuery } from 'next/dist/server/request-meta';
 import { GetServerSidePropsContext } from 'next';
 
@@ -35,7 +35,21 @@ describe('PostDetailPage', () => {
     expect(actual).toBeInTheDocument();
   });
 
-  describe.only('getServerSideProps', () => {
+  test('given an error prop, it should render an error message', () => {
+    const expected = new RegExp("error", "i");
+    render(<PostDetailPage error={true} />);
+    const actual = screen.getByText(expected);
+    expect(actual).toBeInTheDocument();
+  });
+
+  test('given a notFound prop, it should render a not found message', () => {
+    const expected = new RegExp("not found", "i");
+    render(<PostDetailPage notFound={true} />);
+    const actual = screen.getByText(expected);
+    expect(actual).toBeInTheDocument();
+  })
+
+  describe('getServerSideProps', () => {
     beforeAll(() => server.listen());
     afterEach(() => server.resetHandlers());
     afterAll(() => server.close());
@@ -57,7 +71,7 @@ describe('PostDetailPage', () => {
       );
     });
 
-    test.only('it should return a props object with notFound if response status is 404', async () => {
+    test('it should return a props object with notFound if response status is 404', async () => {
       const context = {
         params: { slug: 'not-valid-slug' } as NextParsedUrlQuery
       };
@@ -68,6 +82,36 @@ describe('PostDetailPage', () => {
         expect.objectContaining({
           props: {
             notFound: true
+          }
+        })
+      );
+    });
+
+    test('it should return a props object error if response errors and is not 404', async () => {
+      server.use(getPostHandlerException);
+
+      const context = {
+        params: { slug: 'exception' } as NextParsedUrlQuery
+      };
+
+      const actual = await getServerSideProps(context as GetServerSidePropsContext);
+
+      expect(actual).toEqual(
+        expect.objectContaining({
+          props: {
+            error: true
+          }
+        })
+      );
+    });
+
+    test('it should return a props object error if no slug in context', async () => {
+      const actual = await getServerSideProps({} as GetServerSidePropsContext);
+
+      expect(actual).toEqual(
+        expect.objectContaining({
+          props: {
+            error: true
           }
         })
       );
