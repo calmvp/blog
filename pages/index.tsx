@@ -2,10 +2,10 @@ import { FC, Fragment } from "react";
 import axios from "axios";
 import Hero from "@/components/home-page/hero";
 import FeaturedPosts from "@/components/home-page/featured-posts";
-import { ContentPost } from "@/components/posts/post";
+import { Post } from "@/components/posts/post";
 
 interface HomePageProps {
-  posts?: ContentPost[],
+  posts?: Post[],
   error?: boolean
 }
 
@@ -27,7 +27,7 @@ const HomePage: FC<HomePageProps> = ({ posts, error }) => {
 export async function getStaticProps() {
   try {
     const { BASE_URL } = process.env;
-    const { data } = await axios.get<ContentPost[]>(`${BASE_URL}/api/posts?featured=true`);
+    const { data } = await axios.get<Post[]>(`${BASE_URL}/api/posts?featured=true`);
     return {
       props: {
         posts: data

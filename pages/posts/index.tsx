@@ -4,7 +4,7 @@ import { ContentPost, Post } from "@/components/posts/post";
 import axios from "axios";
 
 interface AllPostsPageProps {
-  posts?: ContentPost[];
+  posts?: Post[];
   error?: boolean;
 }
 
@@ -25,7 +25,7 @@ const AllPostsPage: FC<AllPostsPageProps> = ({ posts, error }) => {
 export async function getStaticProps() {
   try {
     const { BASE_URL } = process.env;
-    const { data } = await axios.get<ContentPost[]>(`${BASE_URL}/api/posts`);
+    const { data } = await axios.get<Post[]>(`${BASE_URL}/api/posts`);
     return {
       props: {
         posts: data

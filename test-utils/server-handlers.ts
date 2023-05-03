@@ -24,8 +24,29 @@ export const getPostsHandlerException = rest.get(
     res(ctx.status(500), ctx.json({ message: 'Get posts exception' }))
 );
 
+const getPostHandler = rest.get(`${getPostsPath}/:slug`, async (req, res, ctx) => {
+  const { slug } = req.params;
+  const post = mockedPosts.find(m => m.slug === slug);
+  if (post) {
+    return res(
+      ctx.status(200),
+      ctx.json(post)
+    );
+  }
+  
+  return res(
+    ctx.status(404),
+    ctx.json({ message: 'Post not found'})
+  );
+});
+
+export const getPostHandlerException = rest.get(`${getPostsPath}/:slug`, async(req, res, ctx) => {
+  res(ctx.status(500), ctx.json({ message: 'Get post by slug exception'}));
+});
+
 const handlers = [
-  getPostsHandler
+  getPostsHandler,
+  getPostHandler
 ]
 
 export { handlers }
