@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Image from "next/image";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import { ContentPost } from "../post";
 import PostHeader from "./post-header";
@@ -10,6 +11,7 @@ interface PostContentProps {
 
 const PostContent: FC<PostContentProps> = ({ post: { content, image, slug, title }}) => {
   const imagePath = `/images/posts/${slug}/${image}`;
+
   return (
     <article className={classes.content}>
       <PostHeader title={title} image={imagePath} />
