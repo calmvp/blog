@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from './index';
 import * as postsService from  '../../../services/posts-service';
 import { ContentPost } from '@/components/posts/post';
+import { mockedPosts } from '../../../__mocks__/mocks';
 
 type ApiRequest = NextApiRequest & ReturnType<typeof createRequest>;
 type ApiResponse = NextApiResponse & ReturnType<typeof createResponse>;
@@ -81,36 +82,16 @@ describe('/api/posts API Endpoint', () => {
   });
 
   describe('POST request method', () => {
-    const expectedPosts: ContentPost[] = [
-      {
-        title: 'my title',
-        excerpt: 'test ex',
-        date: '2022-04-05',
-        image: 'test-image.jpg',
-        slug: 'my-title',
-        isFeatured: false,
-        content: 'mock content'
-      },
-      {
-        title: 'here is a title',
-        excerpt: 'test excerpt here',
-        date: '2023-01-02',
-        image: 'test-my-image.jpg',
-        slug: 'here-is-a-slug',
-        isFeatured: true,
-        content: 'more mock content'
-      }
-    ];
     it('should call the imported writePosts function with an array of posts from the request body and return a 201 status code', async () => {
       const { req, res } = mockRequestResponse('POST');
       req.body = {
-        posts: expectedPosts
+        posts: mockedPosts
       }
 
       await handler(req, res);
 
       expect(mockedPostsService.writePosts).toHaveBeenCalledTimes(1);
-      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(expectedPosts);
+      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(mockedPosts);
       expect(res.statusCode).toBe(201);
       expect(res._getJSONData()).toEqual({ message: 'Success!' });
     });
@@ -118,14 +99,14 @@ describe('/api/posts API Endpoint', () => {
     it('should return a 400 status code if the writePosts function rejects', async () => {
       const { req, res } = mockRequestResponse('POST');
       req.body = {
-        posts: expectedPosts
+        posts: mockedPosts
       }
       mockedPostsService.writePosts.mockRejectedValue(new Error('Failed'));
 
       await handler(req, res);
 
       expect(mockedPostsService.writePosts).toHaveBeenCalledTimes(1);
-      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(expectedPosts);
+      expect(mockedPostsService.writePosts).toHaveBeenCalledWith(mockedPosts);
       expect(res.statusCode).toBe(400);
       expect(res._getJSONData()).toEqual({ err: 'Failed to write posts' });
     })
