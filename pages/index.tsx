@@ -1,4 +1,5 @@
 import { FC, Fragment } from "react";
+import Head from "next/head";
 import axios from "axios";
 import Hero from "@/components/home-page/hero";
 import FeaturedPosts from "@/components/home-page/featured-posts";
@@ -16,6 +17,13 @@ const HomePage: FC<HomePageProps> = ({ posts, error }) => {
 
   return (
     <Fragment>
+      <Head>
+        <title>Cicero's Blog</title>
+        <meta 
+          name='description'
+          content='Nulla et tortor eget nibh pharetra vulputate nec ut justo'
+        />
+      </Head>
       <Hero />
       { error && <p>An Error Occurred</p> }
       {(!posts || posts.length === 0) && <p>No Featured Posts</p>}

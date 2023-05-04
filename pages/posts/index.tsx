@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Head from "next/head";
 import AllPosts from "@/components/posts/all-posts";
 import { ContentPost, Post } from "@/components/posts/post";
 import axios from "axios";
@@ -15,6 +16,13 @@ const AllPostsPage: FC<AllPostsPageProps> = ({ posts, error }) => {
   
   return (
     <>
+      <Head>
+        <title>All Posts</title>
+        <meta 
+          name="description" 
+          content="Nullam quis magna ante." 
+        />
+      </Head>
       {error && <p>An Error Occurred</p>}
       {(!posts || posts.length === 0) && <p>No Posts Found...</p>}
       {(posts && posts.length > 0) && <AllPosts posts={posts} />}

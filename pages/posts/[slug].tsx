@@ -1,5 +1,6 @@
 import {FC} from "react";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import axios, { AxiosError} from 'axios';
 import PostContent from "@/components/posts/post-detail/post-content";
 import { ContentPost, Post } from "@/components/posts/post";
@@ -13,6 +14,10 @@ interface PostDetailPageProps {
 const PostDetailPage: FC<PostDetailPageProps> = ({ post, error, notFound }) => {
   return (
     <>
+      <Head>
+        <title>{post ? post.title : 'Error'}</title>
+        <meta name='description' content={post ? post.excerpt : 'Something went wrong'} />
+      </Head>
       { notFound && <p>Post Not Found</p>}
       { error && <p>An Error Occurred</p>}
       { post && <PostContent post={post} /> }
