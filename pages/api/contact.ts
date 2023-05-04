@@ -10,7 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { contact } = req.body;
   if (validateEmail(contact.email)) {
     try {
-
       await writeContact(contact);
       res.status(201).json({ message: 'Success'});
       return;

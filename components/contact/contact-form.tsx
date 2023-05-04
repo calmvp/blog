@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import classes from './contact-form.module.css';
 
@@ -15,10 +15,25 @@ const ContactForm = () => {
     setContactInfo(newObje);
   };
 
+  const sendMessageHandler = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    axios.post('/api/contact',
+      {
+        contact: contactInfo
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  }
+
   return (
     <section className={classes.contact}>
       <h1>What Ails You, My Friend?</h1>
-      <form className={classes.form} aria-label="contact-form">
+      <form className={classes.form} aria-label="contact-form" onSubmit={sendMessageHandler}>
         <div className={classes.controls}>
           <div className={classes.control}>
             <label htmlFor='email'>Your Email</label>
@@ -56,7 +71,7 @@ const ContactForm = () => {
         </div>
       </form>
     </section>
-  )
+  );
 };
 
 export default ContactForm;
