@@ -47,7 +47,7 @@ describe('/api/contact API endpoint', () => {
       expect(res._getJSONData()).toEqual({ message: 'Success' });
     });
 
-    it('should return a 400 status code if the writePosts function rejects', async () => {
+    it('should return a 500 status code if the writePosts function rejects', async () => {
       const { req, res } = mockRequestResponse('POST');
       req.body = {
         contact: mockContact
@@ -58,8 +58,27 @@ describe('/api/contact API endpoint', () => {
 
       expect(mockedWriteContact).toHaveBeenCalledTimes(1);
       expect(mockedWriteContact).toHaveBeenCalledWith(mockContact);
-      expect(res.statusCode).toBe(400);
+      expect(res.statusCode).toBe(500);
       expect(res._getJSONData()).toEqual({ err: 'Failed to write contact' });
+    });
+
+    it('should return a 400 status code if the request body contact email is invalid', async () => {
+      const invalidEmailContact = {
+        name: 'Bad Actor',
+        email: 'badactor',
+        message: 'I am trying to post a contact without a legit email!'
+      };
+      const { req, res } = mockRequestResponse('POST');
+      req.body = {
+        contact: invalidEmailContact
+      }
+      mockedWriteContact.mockRejectedValue(new Error('Failed'));
+
+      await handler(req, res);
+
+      expect(mockedWriteContact).not.toHaveBeenCalled();
+      expect(res.statusCode).toBe(400);
+      expect(res._getJSONData()).toEqual({ err: 'Invalid email' })
     })
   });
 })
