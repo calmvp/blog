@@ -1,11 +1,9 @@
-import { createMocks, createRequest, createResponse, RequestMethod } from 'node-mocks-http';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { RequestMethod } from 'node-mocks-http';
+import { ObjectId } from 'mongodb';
 import handler from './[slug]';
 import { getPostBySlug } from  '../../../services/posts-service';
-import { ContentPost } from '@/components/posts/post';
 import { mockedPosts } from '../../../__mocks__/mocks';
 import { mockRequestResponse } from '../../../test-utils/mock-req-res';
-import { ObjectId } from 'mongodb';
 
 jest.mock('../../../services/posts-service');
 const mockedGetPostBySlug = jest.mocked(getPostBySlug);
