@@ -47,7 +47,7 @@ describe('PostDetailPage', () => {
     render(<PostDetailPage notFound={true} />);
     const actual = screen.getByText(expected);
     expect(actual).toBeInTheDocument();
-  })
+  });
 
   describe('getServerSideProps', () => {
     beforeAll(() => server.listen());
