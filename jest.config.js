@@ -7,9 +7,9 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', '<rootDir>/test-utils/setup-portals.ts'],
   testEnvironment: 'jest-environment-jsdom',
-  setupFiles: ['<rootDir>/lib/text-encoder.mock.ts']
+  setupFiles: ['<rootDir>/lib/text-encoder.mock.ts'],
 }
 
 // https://github.com/vercel/next.js/issues/35634#issuecomment-1115250297

@@ -1,6 +1,8 @@
 import { screen, render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContactForm from "./contact-form";
+import { server } from "../../test-utils/server";
+import { writeContactHandlerException } from "../../test-utils/server-handlers";
 
 describe('ContactForm', () => {
   test('it should display the header', () => {
@@ -76,5 +78,57 @@ describe('ContactForm', () => {
       await user.type(messageTextArea, expected);
       expect(messageTextArea).toHaveValue(expected);
     });
+  });
+
+  describe('notifications', () => {
+    beforeAll(() => server.listen());
+    afterEach(() => server.resetHandlers());
+    afterAll(() => server.close());
+    test('it should render an error notification when the write contact operation fails', async () => {
+      server.use(writeContactHandlerException);
+      const user = userEvent.setup();
+      render(<ContactForm />);
+
+      const nameInput = screen.getByLabelText(/name/i);
+      await user.type(nameInput, 'Clint Bellagio');
+
+      const emailInput = screen.getByLabelText(/email/i);
+      await user.type(emailInput, 'cbellagio@gmail.com');
+
+      const messageTextArea = screen.getByLabelText(/message/i);
+      await user.type(messageTextArea, 'my cool message');
+
+      const submitButton = screen.getByRole('button', { name: /send message/i});
+      await user.click(submitButton);
+
+      const notificationTitleElement =  screen.getByText('An Error Occurred');
+      const notificationMessageElement = screen.getByText('Request failed with status code 500');
+
+      expect(notificationTitleElement).toBeInTheDocument();
+      expect(notificationMessageElement).toBeInTheDocument();
+    });
+
+    test('it should render a success notification when the write contact operation completes successfully', async () => {
+      const user = userEvent.setup();
+      render(<ContactForm />);
+
+      const nameInput = screen.getByLabelText(/name/i);
+      await user.type(nameInput, 'Clint Bellagio');
+
+      const emailInput = screen.getByLabelText(/email/i);
+      await user.type(emailInput, 'cbellagio@gmail.com');
+
+      const messageTextArea = screen.getByLabelText(/message/i);
+      await user.type(messageTextArea, 'my cool message');
+
+      const submitButton = screen.getByRole('button', { name: /send message/i});
+      await user.click(submitButton);
+
+      const notificationTitleElement =  await screen.findByText('Success!');
+      const notificationMessageElement = await screen.findByText('Message sent!');
+
+      expect(notificationTitleElement).toBeInTheDocument();
+      expect(notificationMessageElement).toBeInTheDocument();
+    })
   });
 });

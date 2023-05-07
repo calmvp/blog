@@ -45,9 +45,22 @@ export const getPostHandlerException = rest.get(
   async(req, res, ctx) => res(ctx.status(500), ctx.json({ message: 'Get post by slug exception'}))
 );
 
+const contactPath = `${BASE_URL}/api/contact`;
+const writeContactHandler = rest.post(contactPath, async (req, res, ctx) => {
+  return res(
+    ctx.status(201),
+    ctx.json({ message: 'Success!' })
+  )
+});
+export const writeContactHandlerException = rest.post(
+  contactPath,
+  async(req, res, ctx) => res(ctx.status(500), ctx.json({ message: 'Write contact exception' }))
+)
+
 const handlers = [
   getPostsHandler,
-  getPostHandler
+  getPostHandler,
+  writeContactHandler
 ]
 
 export { handlers }
