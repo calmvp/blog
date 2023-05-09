@@ -35,7 +35,8 @@ const HomePage: FC<HomePageProps> = ({ posts, error }) => {
 export async function getStaticProps() {
   try {
     const { BASE_URL } = process.env;
-    const { data } = await axios.get<Post[]>(`${BASE_URL}/api/posts?featured=true`);
+    const baseUrl = BASE_URL ? BASE_URL : process.env.VERCEL_URL;
+    const { data } = await axios.get<Post[]>(`${baseUrl}/api/posts?featured=true`);
     return {
       props: {
         posts: data

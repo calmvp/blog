@@ -33,7 +33,8 @@ const AllPostsPage: FC<AllPostsPageProps> = ({ posts, error }) => {
 export async function getStaticProps() {
   try {
     const { BASE_URL } = process.env;
-    const { data } = await axios.get<Post[]>(`${BASE_URL}/api/posts`);
+    const baseUrl = BASE_URL ? BASE_URL : process.env.VERCEL_URL;
+    const { data } = await axios.get<Post[]>(`${baseUrl}/api/posts`);
     return {
       props: {
         posts: data

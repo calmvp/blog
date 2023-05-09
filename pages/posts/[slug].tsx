@@ -39,7 +39,8 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
 
   try {
     const { BASE_URL } = process.env;
-    const res = await axios.get<ContentPost>(`${BASE_URL}/api/posts/${slug}`);
+    const baseUrl = BASE_URL ? BASE_URL : process.env.VERCEL_URL;
+    const res = await axios.get<ContentPost>(`${baseUrl}/api/posts/${slug}`);
     
     return {
       props: {
