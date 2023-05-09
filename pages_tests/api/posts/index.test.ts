@@ -1,6 +1,6 @@
 import { createMocks, createRequest, createResponse, RequestMethod } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import handler from './index';
+import handler from '../../../pages/api/posts/index';
 import * as postsService from  '../../../services/posts-service';
 import { ContentPost } from '@/components/posts/post';
 import { mockedPosts } from '../../../__mocks__/mocks';

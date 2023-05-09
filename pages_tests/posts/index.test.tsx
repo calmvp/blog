@@ -1,5 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import AllPostsPage, { getStaticProps } from ".";
+import AllPostsPage, { getStaticProps } from "../../pages/posts";
 import { server } from "../../test-utils/server";
 import { getPostsHandlerException } from '../../test-utils/server-handlers';
 import { mockedPosts } from "../../__mocks__/mocks";

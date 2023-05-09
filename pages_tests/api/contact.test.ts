@@ -1,7 +1,7 @@
 import { RequestMethod } from 'node-mocks-http';
 import { ObjectId } from 'mongodb';
 import { writeContact } from "../../services/contacts-service";
-import handler from "./contact";
+import handler from "../../pages/api/contact";
 import { mockRequestResponse } from '../../test-utils/mock-req-res';
 
 

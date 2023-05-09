@@ -1,6 +1,6 @@
 import { RequestMethod } from 'node-mocks-http';
 import { ObjectId } from 'mongodb';
-import handler from './[slug]';
+import handler from '../../../pages/api/posts/[slug]';
 import { getPostBySlug } from  '../../../services/posts-service';
 import { mockedPosts } from '../../../__mocks__/mocks';
 import { mockRequestResponse } from '../../../test-utils/mock-req-res';

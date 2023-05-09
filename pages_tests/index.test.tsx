@@ -2,7 +2,7 @@ import { screen, render } from "@testing-library/react"
 import { server } from "../test-utils/server";
 import { getPostsHandlerException } from '../test-utils/server-handlers';
 import { mockedFeaturedPosts } from "../__mocks__/mocks";
-import HomePage, { getStaticProps } from './';
+import HomePage, { getStaticProps } from '../pages/index';
 
 describe('HomePage', () => {
   test('it should render the hero component', () => {

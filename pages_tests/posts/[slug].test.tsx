@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import PostDetailPage, { getServerSideProps } from './[slug]';
+import PostDetailPage, { getServerSideProps } from '../../pages/posts/[slug]';
 import { mockedPosts } from '../../__mocks__/mocks';
 import { server } from "../../test-utils/server";
 import { getPostHandlerException } from '../../test-utils/server-handlers';
